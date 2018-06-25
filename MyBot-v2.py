@@ -11,6 +11,8 @@ def Attack(my_planets, ships):
             if calculate_distance_between(ship, planet) < 14:
                 return ship
 
+    return None;
+
 while True:
     game_map = game.update_map()
 
@@ -28,9 +30,11 @@ while True:
         my_ships = game_map.get_me().all_ships()
         closest_enemy_ships = [entities_by_distance[distance][0] for distance in entities_by_distance if isinstance(entities_by_distance[distance][0], hlt.entity.Ship) and entities_by_distance[distance][0] not in my_ships]
 
-        attack_specific_ship = Attack(game_map.get_me.all_planets(), closest_enemy_ships)
+        my_planets = []
 
-        if attack_specific_ship:
+        attack_specific_ship = Attack(my_planets, closest_enemy_ships)
+
+        if attack_specific_ship != None:
             navigate_command = ship.navigate(
                 ship.closest_point_to(attack_specific_ship),
                 game_map,
@@ -39,9 +43,10 @@ while True:
             if navigate_command:
                 command_queue.append(navigate_command)
         else:
-            if len(closest_empty_planets) > 0 and not Attack():
+            if len(closest_empty_planets) > 0:
                 if (ship.can_dock(closest_empty_planets[0])):
                     command_queue.append(ship.dock(closest_empty_planets[0]))
+                    my_planets.append(closest_empty_planets[0])
                 else:
                     navigate_command = ship.navigate(
                         ship.closest_point_to(closest_empty_planets[0]),
